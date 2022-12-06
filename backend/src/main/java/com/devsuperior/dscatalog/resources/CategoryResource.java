@@ -22,9 +22,9 @@ public class CategoryResource {
         return ResponseEntity.ok().body(service.findAll());
     }
 
-    @PostMapping
-    public ResponseEntity<String> save(@RequestBody Category newCategory) {
-        return ResponseEntity.ok().body("Saved Successfully");
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<CategoryDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(service.findById(id));
     }
     
 }

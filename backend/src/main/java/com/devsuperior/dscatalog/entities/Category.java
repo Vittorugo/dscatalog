@@ -10,6 +10,7 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "tb_categories")
 public class Category implements Serializable {
@@ -18,6 +19,31 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+//
+//    public static class Builder {
+//        private Long id;
+//        private String name;
+//
+//        public Builder(Long id, String name) {
+//            this.id = id;
+//            this.name = name;
+//        }
+//
+//        public Builder novoParametro(Object obj) {
+//            Object object = obj;
+//            return this;
+//        }
+//
+//         public  Category build() {
+//            return new Category(this);
+//         }
+//    }
+//
+//    public Category(Builder builder) {
+//        this.id = builder.id;
+//        this.name = builder.name;
+//    }
 
     @Override
     public String toString() {
