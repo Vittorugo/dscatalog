@@ -42,13 +42,21 @@ public class CategoryService {
 
     @Transactional
     public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
-        Category updateCategory = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Category Not Found"));
+        // Utilizando o findById
+        //Category updateCategory = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Category Not Found"));
 
         if(categoryDTO.getName() == null || categoryDTO.getName().isBlank()) {
             throw new PropertyNotFoundException(PROPERTY_NULL_OR_EMPTY);
         }
 
-        updateCategory.setName(categoryDTO.getName());
-        return new CategoryDTO(repository.save(updateCategory));
+        try {
+            //Utilizando o getReferenceById
+            Category updateCategory = repository.getReferenceById(id);
+            updateCategory.setName(categoryDTO.getName());
+
+            return new CategoryDTO(repository.save(updateCategory));
+        } catch (javax.persistence.EntityNotFoundException exception) {
+            throw new EntityNotFoundException("Entity Not Found");
+        }
     }
 }
