@@ -1,5 +1,6 @@
 package com.devsuperior.dscatalog.resources.exceptions;
 
+import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
 import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundException;
 import com.devsuperior.dscatalog.services.exceptions.PropertyNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -35,5 +36,18 @@ public class ResourceExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST.value())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(DataBaseException.class)
+    public ResponseEntity<MessageError> dataBasehandler(DataBaseException exception, HttpServletRequest servletRequest) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        MessageError error = MessageError.builder()
+                .time(Instant.now())
+                .message(exception.getMessage())
+                .error("Integrity violation")
+                .path(servletRequest.getRequestURI())
+                .status(status.value())
+                .build();
+        return ResponseEntity.status(status).body(error);
     }
 }
