@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 
 @Getter
@@ -19,7 +20,19 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIMEZONE")
+    private Instant createdAt;
 
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIMEZONE")
+    private Instant updatedAt;
+
+    public void prePersist() {
+        createdAt = Instant.now();
+    }
+
+    public void preUpdate() {
+        updatedAt = Instant.now();
+    }
 //
 //    public static class Builder {
 //        private Long id;
