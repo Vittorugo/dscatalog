@@ -53,4 +53,13 @@ public class ProductDto {
 //    public static ProductDto withNamePriceDescriptionImg(String name, Double price, String description, String imgUrl) {
 //        return new ProductDto(name, price, description, imgUrl);
 //    }
+
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
 }
