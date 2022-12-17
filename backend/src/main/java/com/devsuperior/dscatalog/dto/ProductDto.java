@@ -1,10 +1,15 @@
 package com.devsuperior.dscatalog.dto;
 
+import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,12 +23,23 @@ public class ProductDto {
     private String description;
     private String imgUrl;
 
+    private List<CategoryDTO> categories = new ArrayList<>();
+
     public ProductDto(Product product) {
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
         this.description = product.getDescription();
         this.imgUrl = product.getImgUrl();
+    }
+
+    private ProductDto(Product product, Set<Category> categories) {
+        this(product);
+        categories.forEach(category -> this.categories.add(new CategoryDTO(category)));
+    }
+
+    public static ProductDto withCategories(Product product, Set<Category> categories) {
+        return new ProductDto(product, categories);
     }
 
 //    public static ProductDto withNamePrice(String name,Double price) {
