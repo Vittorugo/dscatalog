@@ -1,10 +1,6 @@
 package com.devsuperior.dscatalog.entities;
 
-import com.devsuperior.dscatalog.dto.CategoryDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -13,7 +9,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
 @Table(name = "tb_products")
 public class Product {
@@ -35,6 +30,14 @@ public class Product {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant date;
 
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Instant updatedAt;
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = Instant.now();
+    }
+
     @ManyToMany
     @JoinTable(
             name = "tb_products_categories",
@@ -42,6 +45,8 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     public Set<Category> categories = new HashSet<>();
+
+    public Product() {}
 
     public Product(Long id, String name, String description, Double price, String imgUrl, Instant date) {
         this.id = id;
@@ -52,13 +57,52 @@ public class Product {
         this.date = date;
     }
 
-    private Product(String name, String description, String imgUrl) {
-        this.name = name;
-        this.description = description;
-        this.imgUrl = imgUrl;
+    // Implementação do padrão Builder sem usar o Lombok
+    private Product(Builder builder) {
+        this.name = builder.name;
+        this.description = builder.description;
+        this.imgUrl = builder.imgUrl;
+        this.price = builder.price;
+        this.date = builder.date;
     }
 
-    public static Product withNameDescriptionImg(String name, String description, String imgUrl) {
-        return new Product(name, description, imgUrl);
+    public static class Builder {
+        private String name;
+        private String description;
+        private Double price;
+        private String imgUrl;
+        private Instant date = Instant.now();
+
+        public Builder() {}
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder price(Double price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder imgUrl(String imgUrl) {
+            this.imgUrl = imgUrl;
+            return this;
+        }
+
+        public Builder date(Instant date) {
+            this.date = date;
+            return this;
+        }
+
+        public Product build() {
+            return new Product(this);
+        }
     }
+
 }
