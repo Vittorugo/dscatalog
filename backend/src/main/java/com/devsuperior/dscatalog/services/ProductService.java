@@ -25,13 +25,13 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductDto> findAll(PageRequest pageRequest) {
         Page<Product> response = repository.findAll(pageRequest);
-        return response.map(product -> ProductDto.withCategories(product, product.getCategories()));
+        return response.map(ProductDto::new);
     }
 
     @Transactional
     public ProductDto findById(Long id) {
         Product product = repository.findById(id).orElseThrow( () -> new EntityNotFoundException("No entity found for the given id"));
-        return ProductDto.withCategories(product, product.getCategories());
+        return new ProductDto(product);
     }
 
     @Transactional
