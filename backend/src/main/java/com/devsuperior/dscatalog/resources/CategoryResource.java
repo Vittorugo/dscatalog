@@ -3,6 +3,8 @@ package com.devsuperior.dscatalog.resources;
 import com.devsuperior.dscatalog.dto.CategoryDTO;
 import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.services.CategoryService;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +17,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/categories")
 public class CategoryResource {
@@ -30,8 +33,11 @@ public class CategoryResource {
             @RequestParam(value = "direction", defaultValue = "ASC") String direction
 
     ) {
+        log.info("--- Iniciando busca de todas as categorias ---");
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderby);
-        return ResponseEntity.ok().body(service.findAll(pageRequest));
+        Page<CategoryDTO> listDto = service.findAll(pageRequest);
+        log.info("--- Fim da busca de todas as categorias ---");
+        return ResponseEntity.ok().body(listDto);
     }
 
     @GetMapping(value = "/{id}")

@@ -6,6 +6,7 @@ import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
 import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundException;
 import com.devsuperior.dscatalog.services.exceptions.PropertyNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 public class CategoryService {
 
@@ -29,7 +30,10 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public Page<CategoryDTO> findAll(PageRequest pageRequest) {
+        log.info("--- Início do método CategoryService.findAll ---");
         Page<Category> list = repository.findAll(pageRequest);
+        log.info("--- Lista de todas as categorias: " + list.getContent());
+        log.info("--- Final do método CategoryService.findAll ---");
         return list.map(CategoryDTO::new);
     }
 
