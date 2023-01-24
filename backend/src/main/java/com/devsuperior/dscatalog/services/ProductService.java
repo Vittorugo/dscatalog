@@ -6,8 +6,11 @@ import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
 import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
+import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
 import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -35,13 +38,13 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDto create(ProductDto productDto) {
+    public ProductDto insert(ProductDto productDto) {
         Product newProduct = new Product();
         convertDtoToEntity(productDto, newProduct);
         return new ProductDto(repository.save(newProduct));
     }
 
-    public ProductDto update(Long id, ProductDto dto) {
+    public ProductDto update(ProductDto dto, Long id) {
         try {
             Product product = repository.getReferenceById(id);
             convertDtoToEntity(dto, product);
@@ -51,11 +54,23 @@ public class ProductService {
         }
     }
 
+    public String delete(Long id) {
+        try {
+            repository.deleteById(id);
+            return "Product deleted";
+        } catch (EmptyResultDataAccessException exception) {
+            throw new EntityNotFoundException("Product ID Not Found");
+        } catch (DataIntegrityViolationException exception) {
+            throw new DataBaseException("Integrity violation");
+        }
+    }
+
     private void convertDtoToEntity(ProductDto dto, Product entity) {
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setImgUrl(dto.getImgUrl());
+        entity.setDate(dto.getDate());
 
         entity.getCategories().clear();
 

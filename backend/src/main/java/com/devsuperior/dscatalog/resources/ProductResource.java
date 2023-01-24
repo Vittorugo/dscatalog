@@ -26,7 +26,6 @@ public class ProductResource {
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction
     ) {
-        Product product = Product.withNameDescriptionImg("NAME","TESTE CONSTRUCT FACTORY", "xxxx");
 
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return ResponseEntity.ok().body(service.findAll(pageRequest));
