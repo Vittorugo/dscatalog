@@ -13,6 +13,7 @@ import java.util.Set;
 @Table(name = "tb_products")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Product {
 
     @Id
