@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,19 +27,27 @@ public class CategoryResource {
     private CategoryService service;
 
     @GetMapping
-    public ResponseEntity<Page<CategoryDTO>> findAll(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
-            @RequestParam(value = "orderBy", defaultValue = "name") String orderby,
-            @RequestParam(value = "direction", defaultValue = "ASC") String direction
-
-    ) {
+    public ResponseEntity<Page<CategoryDTO>> findAll(Pageable pageableCategories) {
         log.info("--- Iniciando busca de todas as categorias ---");
-        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderby);
-        Page<CategoryDTO> listDto = service.findAll(pageRequest);
+        Page<CategoryDTO> listDto = service.findAll(pageableCategories);
         log.info("--- Fim da busca de todas as categorias ---");
         return ResponseEntity.ok().body(listDto);
     }
+
+//    @GetMapping
+//    public ResponseEntity<Page<CategoryDTO>> findAll(
+//            @RequestParam(value = "page", defaultValue = "0") Integer page,
+//            @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
+//            @RequestParam(value = "orderBy", defaultValue = "name") String orderby,
+//            @RequestParam(value = "direction", defaultValue = "ASC") String direction
+//
+//    ) {
+//        log.info("--- Iniciando busca de todas as categorias ---");
+//        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderby);
+//        Page<CategoryDTO> listDto = service.findAll(pageRequest);
+//        log.info("--- Fim da busca de todas as categorias ---");
+//        return ResponseEntity.ok().body(listDto);
+//    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<CategoryDTO> findById(@PathVariable Long id) {

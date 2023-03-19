@@ -11,6 +11,8 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "tb_products")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
 
     @Id
@@ -46,8 +48,6 @@ public class Product {
     )
     public Set<Category> categories = new HashSet<>();
 
-    public Product() {}
-
     public Product(Long id, String name, String description, Double price, String imgUrl, Instant date) {
         this.id = id;
         this.name = name;
@@ -57,52 +57,52 @@ public class Product {
         this.date = date;
     }
 
-    // Implementação do padrão Builder sem usar o Lombok
-    private Product(Builder builder) {
-        this.name = builder.name;
-        this.description = builder.description;
-        this.imgUrl = builder.imgUrl;
-        this.price = builder.price;
-        this.date = builder.date;
-    }
+//    // Implementação do padrão Builder sem usar o Lombok
+//    private Product(Builder builder) {
+//        this.name = builder.name;
+//        this.description = builder.description;
+//        this.imgUrl = builder.imgUrl;
+//        this.price = builder.price;
+//        this.date = builder.date;
+//    }
 
-    public static class Builder {
-        private String name;
-        private String description;
-        private Double price;
-        private String imgUrl;
-        private Instant date = Instant.now();
-
-        public Builder() {}
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder price(Double price) {
-            this.price = price;
-            return this;
-        }
-
-        public Builder imgUrl(String imgUrl) {
-            this.imgUrl = imgUrl;
-            return this;
-        }
-
-        public Builder date(Instant date) {
-            this.date = date;
-            return this;
-        }
-
-        public Product build() {
-            return new Product(this);
-        }
-    }
+//    public static class Builder {
+//        private String name;
+//        private String description;
+//        private Double price;
+//        private String imgUrl;
+//        private Instant date = Instant.now();
+//
+//        public Builder() {}
+//
+//        public Builder name(String name) {
+//            this.name = name;
+//            return this;
+//        }
+//
+//        public Builder description(String description) {
+//            this.description = description;
+//            return this;
+//        }
+//
+//        public Builder price(Double price) {
+//            this.price = price;
+//            return this;
+//        }
+//
+//        public Builder imgUrl(String imgUrl) {
+//            this.imgUrl = imgUrl;
+//            return this;
+//        }
+//
+//        public Builder date(Instant date) {
+//            this.date = date;
+//            return this;
+//        }
+//
+//        public Product build() {
+//            return new Product(this);
+//        }
+//    }
 
 }
