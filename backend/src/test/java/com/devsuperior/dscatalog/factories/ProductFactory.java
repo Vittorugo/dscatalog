@@ -1,5 +1,6 @@
 package com.devsuperior.dscatalog.factories;
 
+import com.devsuperior.dscatalog.dto.ProductDto;
 import com.devsuperior.dscatalog.entities.Product;
 
 import java.time.Instant;
@@ -16,5 +17,9 @@ public class ProductFactory {
                 .date(Instant.parse("2020-07-14T10:00:00Z"))
                 .price(2.50)
                 .build();
+    }
+
+    public static ProductDto createProductDto() {
+        return new ProductDto(createProduct());
     }
 }
