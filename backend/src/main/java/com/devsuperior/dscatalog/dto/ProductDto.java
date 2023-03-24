@@ -36,6 +36,7 @@ public class ProductDto {
         this.date = product.getDate();
     }
 
+
     public ProductDto(Product product, Set<Category> categories) {
         this(product);
         categories.forEach( category -> this.categories.add(new CategoryDTO(category)));

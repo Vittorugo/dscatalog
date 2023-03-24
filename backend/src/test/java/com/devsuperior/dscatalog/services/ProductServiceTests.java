@@ -92,6 +92,31 @@ public class ProductServiceTests {
     }
 
     @Test
+    public void updateShouldUpdateObjectWhenIdExist() {
+        when(productRepository.getReferenceById(existingId)).thenReturn(product);
+        when(productRepository.save(any())).thenReturn(product);
+
+        ProductDto result = productService.update(dto, existingId);
+
+        Assertions.assertDoesNotThrow(() -> {
+            productService.update(dto, existingId);
+        });
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
+    public void updateShouldUpdateObjectWhenIdNotExist() {
+        when(productRepository.getReferenceById(nonExistingId)).thenReturn(product);
+        when(productRepository.save(any())).thenThrow(EntityNotFoundException.class);
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> {
+            productService.update(dto, nonExistingId);
+        });
+        verify(productRepository).getReferenceById(any());
+        verify(productRepository).save(any());
+    }
+
+    @Test
     public void deleteShouldDoNothingWhenIdExists() {
 
         Mockito.doNothing().when(productRepository).deleteById(existingId);
