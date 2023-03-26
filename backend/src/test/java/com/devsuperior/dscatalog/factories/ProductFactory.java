@@ -29,7 +29,7 @@ public class ProductFactory {
         Product product = createProduct();
         var categories = new HashSet<Category>();
         categories.add(new Category(1L, "TECH", Instant.now(), Instant.now()));
-        product.getCategories().add(Category.builder().id(1L).name("TECH").build());
+        categories.add(new Category(2L, "GAME", Instant.now(), Instant.now()));
         return new ProductDto(product, categories);
     }
 }
