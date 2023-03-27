@@ -129,7 +129,7 @@ public class ProductResourceTest {
 
         ResultActions resultActions = mockMvc.perform(delete(BASE_URL_WITH_ID, existsId)
                 .accept(MediaType.APPLICATION_JSON));
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isNoContent());
     }
 
     @Test
@@ -148,5 +148,22 @@ public class ProductResourceTest {
         ResultActions resultActions = mockMvc.perform(delete(BASE_URL_WITH_ID, nonExistsId));
 
         resultActions.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    public void insertShouldCreateObject() throws Exception{
+        when(productService.insert(any())).thenReturn(dto);
+
+        var productJsonBody = objectMapper.writeValueAsString(dto);
+
+        ResultActions resultActions = mockMvc.perform(post("/products")
+                        .content(productJsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
+
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.name").value("Agua"));
+        resultActions.andExpect(jsonPath("$.categories[1].name").value("GAME"));
+        resultActions.andExpect(jsonPath("$.categories[?(@.name == 'TECH')].id").value(1));
     }
 }
