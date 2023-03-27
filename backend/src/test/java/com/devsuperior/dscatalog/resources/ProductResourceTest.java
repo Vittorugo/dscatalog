@@ -3,6 +3,7 @@ package com.devsuperior.dscatalog.resources;
 import com.devsuperior.dscatalog.dto.ProductDto;
 import com.devsuperior.dscatalog.factories.ProductFactory;
 import com.devsuperior.dscatalog.services.ProductService;
+import com.devsuperior.dscatalog.services.exceptions.DataBaseException;
 import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +18,15 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,6 +45,8 @@ public class ProductResourceTest {
     private ProductDto dto;
     private Long existsId;
     private Long nonExistsId;
+
+    private final static String BASE_URL_WITH_ID = "/products/{id}";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -68,7 +72,7 @@ public class ProductResourceTest {
     public void findByIdShouldReturObjectWhenIdExist() throws Exception {
         when(productService.findById(existsId)).thenReturn(dto);
 
-        ResultActions resultActions = mockMvc.perform(get("/products/{id}",existsId)
+        ResultActions resultActions = mockMvc.perform(get(BASE_URL_WITH_ID,existsId)
                 .accept("application/json"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(jsonPath("$.id").exists());
@@ -81,7 +85,7 @@ public class ProductResourceTest {
     public void findByIdShouldReturnNoFoundExceptionWhenIdDoesNotExist() throws Exception {
         when(productService.findById(nonExistsId)).thenThrow(EntityNotFoundException.class);
 
-        ResultActions resultActions = mockMvc.perform(get("/products/{id}", nonExistsId)
+        ResultActions resultActions = mockMvc.perform(get(BASE_URL_WITH_ID, nonExistsId)
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions.andExpect(status().isNotFound());
@@ -95,7 +99,7 @@ public class ProductResourceTest {
 
         var productJsonBody = objectMapper.writeValueAsString(dto);
 
-        ResultActions resultActions = mockMvc.perform(put("/products/{id}", existsId)
+        ResultActions resultActions = mockMvc.perform(put(BASE_URL_WITH_ID, existsId)
                         .content(productJsonBody)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept("application/json"));
@@ -111,12 +115,38 @@ public class ProductResourceTest {
 
         var productJsonBody = objectMapper.writeValueAsString(dto);
 
-        ResultActions resultActions = mockMvc.perform(put("/products/{id}", nonExistsId)
+        ResultActions resultActions = mockMvc.perform(put(BASE_URL_WITH_ID, nonExistsId)
                 .content(productJsonBody)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
         resultActions.andExpect(status().isNotFound());
     }
 
+    @Test
+    public void deleteShouldDeleteObjectWhenIdExist() throws Exception {
+        //doNothing().when(productService).delete(existsId); // Essa forma seria utilizada caso o método delete fosse void.
+        when(productService.delete(existsId)).thenReturn("Deleted object");
 
+        ResultActions resultActions = mockMvc.perform(delete(BASE_URL_WITH_ID, existsId)
+                .accept(MediaType.APPLICATION_JSON));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void deleteShouldThrowExceptionWhenIdDoesNotExist() throws Exception {
+        when(productService.delete(nonExistsId)).thenThrow(EntityNotFoundException.class);
+
+        ResultActions resultActions = mockMvc.perform(delete(BASE_URL_WITH_ID, nonExistsId));
+
+        resultActions.andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void deleteShouldThrowExceptionWhenDataIntegrityViolation() throws Exception {
+        when(productService.delete(nonExistsId)).thenThrow(DataBaseException.class);
+
+        ResultActions resultActions = mockMvc.perform(delete(BASE_URL_WITH_ID, nonExistsId));
+
+        resultActions.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+    }
 }
