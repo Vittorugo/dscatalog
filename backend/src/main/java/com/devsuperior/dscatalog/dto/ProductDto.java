@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,8 @@ public class ProductDto {
         this.description = product.getDescription();
         this.imgUrl = product.getImgUrl();
         this.date = product.getDate();
+
+        product.getCategories().forEach( category -> this.getCategories().add(new CategoryDTO(category)));
     }
 
 

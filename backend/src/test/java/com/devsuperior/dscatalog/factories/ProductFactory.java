@@ -28,7 +28,6 @@ public class ProductFactory {
     public static ProductDto createProductDto() {
         Product product = createProduct();
         var categories = new HashSet<Category>();
-        categories.add(new Category(1L, "TECH", Instant.now(), Instant.now()));
         categories.add(new Category(2L, "GAME", Instant.now(), Instant.now()));
         return new ProductDto(product, categories);
     }

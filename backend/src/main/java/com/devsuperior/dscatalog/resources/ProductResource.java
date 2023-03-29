@@ -10,7 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Calendar;
 
 @RestController
@@ -44,7 +46,13 @@ public class ProductResource {
 
     @PostMapping
     public ResponseEntity<ProductDto> insert(@RequestBody ProductDto productDto) {
-        return ResponseEntity.ok().body(service.insert(productDto));
+        var newProduct = service.insert(productDto);
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newProduct.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(newProduct);
     }
 
     @PutMapping("/{id}")

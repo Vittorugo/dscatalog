@@ -1,7 +1,9 @@
 package com.devsuperior.dscatalog.services;
 
 import com.devsuperior.dscatalog.dto.ProductDto;
+import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
+import com.devsuperior.dscatalog.factories.CategoryFactory;
 import com.devsuperior.dscatalog.factories.ProductFactory;
 import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
@@ -13,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -42,6 +43,8 @@ public class ProductServiceTests {
     private ProductDto dto;
     private PageImpl<Product> page;
 
+    private Category category;
+
     @BeforeEach
     void setUp() throws Exception {
         existingId = 1L;
@@ -49,6 +52,7 @@ public class ProductServiceTests {
         product = ProductFactory.createProduct();
         dto = ProductFactory.createProductDto();
         page = new PageImpl<>(List.of(ProductFactory.createProduct(), ProductFactory.createProduct()));
+        category = CategoryFactory.createCategory();
     }
 
     @Test
@@ -94,6 +98,7 @@ public class ProductServiceTests {
     @Test
     public void updateShouldUpdateObjectWhenIdExist() {
         when(productRepository.getReferenceById(existingId)).thenReturn(product);
+        when(categoryRepository.getReferenceById(any())).thenReturn(category);
         when(productRepository.save(any())).thenReturn(product);
 
         ProductDto result = productService.update(dto, existingId);

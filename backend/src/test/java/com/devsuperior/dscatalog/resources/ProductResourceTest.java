@@ -125,11 +125,12 @@ public class ProductResourceTest {
     @Test
     public void deleteShouldDeleteObjectWhenIdExist() throws Exception {
         //doNothing().when(productService).delete(existsId); // Essa forma seria utilizada caso o método delete fosse void.
-        when(productService.delete(existsId)).thenReturn("Deleted object");
+        when(productService.delete(existsId)).thenReturn("Product deleted");
 
         ResultActions resultActions = mockMvc.perform(delete(BASE_URL_WITH_ID, existsId)
                 .accept(MediaType.APPLICATION_JSON));
-        resultActions.andExpect(status().isNoContent());
+        resultActions.andExpect(status().isOk());
+        resultActions.andReturn().getResponse().getContentAsString().equals("Product deleted");
     }
 
     @Test
@@ -161,7 +162,7 @@ public class ProductResourceTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
 
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isCreated());
         resultActions.andExpect(jsonPath("$.name").value("Agua"));
         resultActions.andExpect(jsonPath("$.categories[1].name").value("GAME"));
         resultActions.andExpect(jsonPath("$.categories[?(@.name == 'TECH')].id").value(1));
