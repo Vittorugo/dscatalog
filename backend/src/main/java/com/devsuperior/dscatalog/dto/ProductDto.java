@@ -4,6 +4,10 @@ import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,11 +21,17 @@ import java.util.Set;
 public class ProductDto {
 
     private Long id;
+
+    @Size(max = 60, message = "Nome não pode ultrapassar 60 caracteres")
+    @NotBlank(message = "O nome não pode ser em branco")
     private String name;
+
+    @Positive(message = "Preço deve ser um valor positivo")
     private Double price;
     private String description;
     private String imgUrl;
 
+    @PastOrPresent(message = "A data do produto não pode ser futura")
     private Instant date;
 
     private List<CategoryDTO> categories = new ArrayList<>();

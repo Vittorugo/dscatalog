@@ -6,7 +6,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.OffsetTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,6 +30,17 @@ public class Category implements Serializable {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant updatedAt;
 
+    @Setter(AccessLevel.NONE)
+    @ManyToMany(mappedBy = "categories")
+    private Set<Product> products = new HashSet<>();
+
+    public Category(long id, String name, Instant createdAt, Instant updatedAt) {
+        this.id = id;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
     @PrePersist
     public void prePersist() {
         createdAt = Instant.now();
@@ -37,6 +50,7 @@ public class Category implements Serializable {
     public void preUpdate() {
         updatedAt = Instant.now();
     }
+
 //
 //    public static class Builder {
 //        private Long id;

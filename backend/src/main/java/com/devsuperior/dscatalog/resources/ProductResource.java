@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.Calendar;
 
@@ -45,7 +46,7 @@ public class ProductResource {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDto> insert(@RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductDto> insert(@Valid @RequestBody ProductDto productDto) {
         var newProduct = service.insert(productDto);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -56,7 +57,7 @@ public class ProductResource {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDto> update(@RequestBody ProductDto dto, @PathVariable Long id) {
+    public ResponseEntity<ProductDto> update(@Valid @RequestBody ProductDto dto, @PathVariable Long id) {
         return ResponseEntity.ok().body(service.update(dto, id));
     }
 
